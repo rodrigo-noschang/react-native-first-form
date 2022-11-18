@@ -1,13 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView } from 'react-native';
+import FormInput from './components/FormInput';
+import IconAnt from 'react-native-vector-icons/AntDesign';
 
-export default function App() {
+export default function RegisterForm() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <KeyboardAvoidingView style = {styles.container}>
+      <StatusBar/>
+      <View>
+        <IconAnt name = "user" size = {25} color = '#000'/>
+        <FormInput field = 'name'/> 
+      </View>
+
+      <View>
+        <IconAnt name = "mail" size = {25} color = '#000'/>
+        <FormInput field = 'email'/> 
+      </View>
+
+      <View>
+        <IconAnt name = "lock" size = {25} color = '#000'/>
+        <FormInput field = 'password'/> 
+      </View>
+
+      <View>
+        <IconAnt name = "lock" size = {25} color = '#000'/>
+        <FormInput field = 'confirmPassword'/> 
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -15,7 +35,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
 });
