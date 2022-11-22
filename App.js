@@ -1,40 +1,80 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, 
+  Keyboard, 
+  KeyboardAvoidingView, 
+  TouchableWithoutFeedback } from 'react-native';
 import FormInput from './components/FormInput';
 import IconAnt from 'react-native-vector-icons/AntDesign';
+import { InputContainer, SubmitButton, SubmitButtonText, ErrorMessage } from './style';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-export default function RegisterForm() {
+export default function App() {
+  const formSchema = yup.object().shape({
+    name: yup.string().required('Nome é obrigatório'),
+    email: yup.string().email('Formato de email invalido').required('Email é obrigatório'),
+    password: yup.string().required('Senha é obrigatória'),
+    confirmPassword: yup.string().required('Confirme a senha')
+      .oneOf([yup.ref('password'), null], 'Senhas devem ser iguais')
+  })
+
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(formSchema)
+  });
+
+  const showData = data => {
+    console.log('Submiting -> ', data);
+  }
+
   return (
-    <KeyboardAvoidingView style = {styles.container}>
-      <StatusBar/>
-      <View>
-        <IconAnt name = "user" size = {25} color = '#000'/>
-        <FormInput field = 'name'/> 
-      </View>
+    <TouchableWithoutFeedback onPress = {Keyboard.dismiss}>
+      <KeyboardAvoidingView style = {styles.formContainer}>
+        <StatusBar/>
 
-      <View>
-        <IconAnt name = "mail" size = {25} color = '#000'/>
-        <FormInput field = 'email'/> 
-      </View>
+        <InputContainer>
+          <IconAnt name = "user" size = {25} color = '#000'/>
+          <FormInput name = 'name' control = {control} /> 
+        </InputContainer>
 
-      <View>
-        <IconAnt name = "lock" size = {25} color = '#000'/>
-        <FormInput field = 'password'/> 
-      </View>
+        { errors.name && <ErrorMessage> {errors.name.message} </ErrorMessage> }
 
-      <View>
-        <IconAnt name = "lock" size = {25} color = '#000'/>
-        <FormInput field = 'confirmPassword'/> 
-      </View>
-    </KeyboardAvoidingView>
+        <InputContainer>
+          <IconAnt name = "mail" size = {25} color = '#000'/>
+          <FormInput name = 'email' control = {control} /> 
+        </InputContainer>
+
+        { errors.email && <ErrorMessage> {errors.email?.message} </ErrorMessage> }
+
+        <InputContainer>
+          <IconAnt name = "lock" size = {25} color = '#000'/>
+          <FormInput name = 'password' control = {control} /> 
+        </InputContainer>
+
+        { errors.password && <ErrorMessage> {errors.password?.message} </ErrorMessage> }
+
+        <InputContainer>
+          <IconAnt name = "lock" size = {25} color = '#000'/>
+          <FormInput name = 'confirmPassword' control = {control} /> 
+        </InputContainer>
+
+        { errors.confirmPassword && <ErrorMessage> {errors.confirmPassword?.message} </ErrorMessage> }
+
+        <SubmitButton onPress = {handleSubmit(showData)}> 
+          <SubmitButtonText> Enviar </SubmitButtonText>
+        </SubmitButton>
+        
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
+
 const styles = StyleSheet.create({
-  container: {
+  formContainer: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'center',
-  },
-});
+    paddingHorizontal: 25 
+  }
+})

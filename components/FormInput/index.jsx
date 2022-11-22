@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput } from "react-native";
 import IconFeather from 'react-native-vector-icons/Feather';
+import { useController } from 'react-hook-form';
 
-const FormInput = ({ field }) => {
+import { FormInputContainer, 
+    InputFieldContainer, 
+    Input, 
+    Visibility, 
+    ErrorContainer, 
+    ErrorMessage } from './style';
+
+const FormInput = ({ name, control }) => {
     const [showPassword, setShowPassword] = useState(false);
+
+    const { field } = useController({
+        control,
+        name
+    })
 
     const capitalizeFieldNameFirstLetter = (fieldName) => {
         const splittedName = fieldName.split('');
@@ -13,33 +25,34 @@ const FormInput = ({ field }) => {
         return splittedName.join('');
     }
 
-    const fieldNameCapitalized = capitalizeFieldNameFirstLetter(field);
+    const fieldNameCapitalized = capitalizeFieldNameFirstLetter(name);
 
     const changePasswordVisibility = () => {
         setShowPassword(!showPassword);
     }
 
     return (
-        <>
-            <View>
-                <TextInput placeholder = {fieldNameCapitalized}
-                    autoCapitalize = {field === 'email'}
-                    secureTextEntry = {field === 'password' || field === 'confirmPassword'}
+        <FormInputContainer>
+            <InputFieldContainer>
+                <Input placeholder = {fieldNameCapitalized}
+                    autoCapitalize = {name === 'email'}
+                    secureTextEntry = {(name === 'password' || name === 'confirmPassword') && !showPassword}
+                    onChangeText = {field.onChange}
+                    value = {field.value}
                     />
 
-                { (field === 'password' || field === 'confirmPassword') &&
 
-                <View>
+                { (name === 'password' || name === 'confirmPassword') &&
+                <Visibility>
                     { showPassword ? 
                         <IconFeather name = 'eye' size = {25} color = '#000' onPress = {changePasswordVisibility}/>
                     :    
                         <IconFeather name = 'eye-off' size = {25} color = '#000' onPress = {changePasswordVisibility}/>
                     }
-                </View> 
+                </Visibility> 
                 }
-            </View>
-            {/* Error: <Text> {fieldNameCapitalized} inválido </Text> */}
-        </>
+            </InputFieldContainer>
+        </FormInputContainer>
     )
 }
 
